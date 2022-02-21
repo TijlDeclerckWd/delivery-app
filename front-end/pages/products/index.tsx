@@ -1,20 +1,22 @@
+import { useFetch } from "core/api";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect } from "react";
 
 const Products: NextPage = () => {
+  const fetch = useFetch();
 
-  // useEffect(() => {
-  //   fetch('localhost:8888/api/products', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //       // 'Content-Type': 'application/x-www-form-urlencoded',
-  //     },
-  //     body: JSON.stringify({ title: 'test'}),
-  //   }).then((data) => console.log('data checj'))
-  // }, []);
+  const body = { title: "Joske" };
+
+  useEffect(() => {
+    fetch
+      .post("products", {
+        // @ts-ignore
+        body: body,
+      })
+      .then((data) => console.log("data check", data));
+  }, []);
 
   return (
     <div>
