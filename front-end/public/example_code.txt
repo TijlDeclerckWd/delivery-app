@@ -1,0 +1,9 @@
+import { styled } from '@mui/system';
+
+const MyComponent = styled('div')({
+
+});
+
+const MyThemeComponent = styled('div')(({ theme }) => ({
+  
+}));

@@ -1,3 +1,6 @@
-const API_ROOT = 'http://localhost:8888/api';
+import maxWidth from "./maxWidth";
+import responsivePadding from "./responsivePadding";
 
-export { API_ROOT };
+const API_ROOT = "http://localhost:8888/api";
+
+export { API_ROOT, maxWidth, responsivePadding };
