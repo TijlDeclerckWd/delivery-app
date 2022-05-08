@@ -1,4 +1,14 @@
-import { Box, Button, Grid, Select } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  IconButton,
+} from "@mui/material";
 import { ControlLabel, PageTitle, ToggleBox } from "components";
 import Head from "next/head";
 import React from "react";
@@ -6,7 +16,10 @@ import * as yup from "yup";
 import { PageContainer } from "styled";
 import { useFormik, Field, FormikProvider, FieldArray } from "formik";
 import TextFieldControl from "components/form/controls/TextFieldControl";
-import { IngredientFilter } from "./IngredientFilter";
+import { IngredientFilter } from "../../../src/components/form/IngredientFilter";
+import { IngredientOption } from "core/types/ingredients";
+import { Delete as DeleteIcon } from "mdi-material-ui";
+import { UploadPicture } from "components/images/UploadPicture";
 
 const validationSchema = yup.object({
   name: yup.string().required("Name is required"),
@@ -30,6 +43,8 @@ const AddMeal = () => {
       name: "",
       description: "",
       categories: [],
+      ingredients: [],
+      profilePicture: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -49,43 +64,57 @@ const AddMeal = () => {
         <FormikProvider value={formik}>
           <form onSubmit={formik.handleSubmit}>
             <Box>
-              <Box mt={2} maxWidth="400px">
-                <TextFieldControl
-                  id="name"
-                  required
-                  name="name"
-                  label="Name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  error={formik.touched.name && Boolean(formik.errors.name)}
-                  onBlur={formik.handleBlur}
-                  helperText={formik.touched.name && formik.errors.name}
-                />
-              </Box>
-              <Box mt={2} maxWidth="400px">
-                <TextFieldControl
-                  multiline
-                  minRows={3}
-                  id="description"
-                  name="description"
-                  label="Description"
-                  value={formik.values.description}
-                  onChange={formik.handleChange}
-                  error={
-                    formik.touched.description &&
-                    Boolean(formik.errors.description)
-                  }
-                  helperText={
-                    formik.touched.description && formik.errors.description
-                  }
-                />
-              </Box>
+              <Grid container>
+                <Grid item md={6}>
+                  <Box mt={2} maxWidth="400px">
+                    <TextFieldControl
+                      id="name"
+                      required
+                      name="name"
+                      label="Name"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      error={formik.touched.name && Boolean(formik.errors.name)}
+                      onBlur={formik.handleBlur}
+                      helperText={formik.touched.name && formik.errors.name}
+                    />
+                  </Box>
+                  <Box mt={2} maxWidth="400px">
+                    <TextFieldControl
+                      multiline
+                      minRows={3}
+                      id="description"
+                      name="description"
+                      label="Description"
+                      value={formik.values.description}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.description &&
+                        Boolean(formik.errors.description)
+                      }
+                      helperText={
+                        formik.touched.description && formik.errors.description
+                      }
+                    />
+                  </Box>
+                </Grid>
+                <Grid item md={6}>
+                  <ControlLabel label="Meal Picture">
+                    <UploadPicture
+                      onChange={(b64: string) =>
+                        formik.setFieldValue("profilePicture", b64)
+                      }
+                    />
+                  </ControlLabel>
+                </Grid>
+              </Grid>
+
               <Box mt={3}>
                 <ControlLabel
                   label="Categories"
                   subLabel="Select all the characteristics that are present in your meal"
                 >
-                  <Grid container spacing={2}>
+                  <Grid maxWidth='700px' container spacing={2}>
                     <FieldArray
                       name="categories"
                       render={(arrayHelpers) => (
@@ -111,15 +140,57 @@ const AddMeal = () => {
                   </Grid>
                 </ControlLabel>
               </Box>
-              <Box mt={3}>
-                <ControlLabel
-                  label="Ingredients"
-                  subLabel="Select all the ingredient of your meal"
-                >
-                  <IngredientFilter />
-                </ControlLabel>
+              <Box mt={3} display="flex">
+                <FieldArray
+                  name="ingredients"
+                  render={(arrayHelpers) => (
+                    <>
+                      <Box width="50%">
+                        <ControlLabel
+                          label="Ingredients"
+                          subLabel="Select all the ingredient of your meal"
+                        >
+                          <IngredientFilter
+                            addChosenIngredient={(
+                              ingredient: IngredientOption
+                            ) => {
+                              console.log("ingredients", ingredient);
+                              arrayHelpers.push(ingredient);
+                            }}
+                          />
+                        </ControlLabel>
+                      </Box>
+                      <Box width="50%">
+                        <List>
+                          {arrayHelpers.form.values.ingredients.map(
+                            (ingredient: IngredientOption, index: number) => {
+                              return (
+                                <ListItem
+                                  secondaryAction={
+                                    <IconButton edge="end" aria-label="delete">
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  }
+                                >
+                                  <ListItemAvatar>
+                                    <Avatar>
+                                      <img
+                                        src={`${process.env.NEXT_PUBLIC_SPOONACULAR_INGREDIENT_IMAGE_URL}100x100/${ingredient.image}`}
+                                      />
+                                    </Avatar>
+                                  </ListItemAvatar>
+                                  <ListItemText primary={ingredient.name} />
+                                </ListItem>
+                              );
+                            }
+                          )}
+                        </List>
+                      </Box>
+                    </>
+                  )}
+                ></FieldArray>
               </Box>
-
+              {/* Where do we go back to when we submitted? */}
               <Box mt={2}>
                 <Button color="primary" variant="contained" type="submit">
                   Submit

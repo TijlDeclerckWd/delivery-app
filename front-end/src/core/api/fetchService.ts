@@ -3,6 +3,7 @@ import { ApiError } from './apiTypes';
 
 interface Options extends RequestInit {
   skipAuthentication?: boolean;
+  alternativeBaseUrl?: string;
 }
 
 // TODO: I had to remove the 'private keyword used in this doc, try to add it again
@@ -57,7 +58,7 @@ class FetchService {
     }
 
     // TODO: handle this to handle the incoming errors from the server
-    return fetch(this.endpoint(endpoint), requestInit)
+    return fetch(this.endpoint(endpoint, options?.alternativeBaseUrl), requestInit)
       .then(response => (response.ok ? response : Promise.reject(response)))
       .then(async res => {
         const resAsText = await res.text();
@@ -79,7 +80,7 @@ class FetchService {
         const apiError = await this.parseErrorResponse(err, endpoint);
         
         if (status === 401) {
-          this.authService?.clearUserToken();
+          // this.authService?.clearUserToken();
           return Promise.reject({
             ...apiError,
             title: 'Unauthorized',
@@ -87,7 +88,8 @@ class FetchService {
         }
 
         if (status === 403) {
-          this.authService?.clearUserToken();
+          // TODO: reactivate this?
+          // this.authService?.clearUserToken();
           return Promise.reject({
             ...apiError,
             title: 'Forbidden',
@@ -130,8 +132,8 @@ class FetchService {
     }
   }
 
-  endpoint(endpoint: string) {
-    return `${this.baseUrl}/${endpoint}`;
+  endpoint(endpoint: string, alternativeBaseUrl?: string) {
+    return `${alternativeBaseUrl || this.baseUrl}/${endpoint}`;
   }
 
   options(options?: Options) {

@@ -1,0 +1,1 @@
+export type MealCategory = "Healthy" | "Cheat Meal" | "No Fat" | "High Protein" | "Sour" | "Sweet" | "Fast Food" | "Spicy";

@@ -38,11 +38,10 @@ const ToggleBox = ({ name, arrayHelpers, label }: ToggleBoxProps) => {
         border: theme => isSelected ? `3px solid ${theme.palette.primary.main}` : `3px solid ${theme.palette.info.main}`,
         color: theme => isSelected ? theme.palette.primary.main : theme.palette.info.main,
         borderRadius: "10px",
-        width: theme => theme.spacing(25),
-        height: "100px",
+        height: "75px",
       }}
     >
-      <Typography variant='h5'>{label}</Typography>
+      <Typography variant='h6'>{label}</Typography>
     </Box>
   );
 };

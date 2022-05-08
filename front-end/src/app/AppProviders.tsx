@@ -2,7 +2,6 @@ import React from "react";
 import { FetchProvider, FetchService } from "../core/api";
 
 import { AppContextProvider } from "../core/context";
-import { API_ROOT } from "helpers";
 import { AuthProvider, AuthService } from "core/auth";
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
 }
 
 const authService = new AuthService();
-const fetchService = new FetchService(API_ROOT ?? "", authService);
+const fetchService = new FetchService(process.env.API_ROOT ?? "", authService);
 
 const AppProviders: React.FC<Props> = ({ children }: Props) => {
   return (
